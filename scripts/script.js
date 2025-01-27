@@ -22,4 +22,6 @@ async function getMatches(){
     }
 };
 
-getMatches();
+//getMatches();
+
+console.log("Hallå")
