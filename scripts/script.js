@@ -6,6 +6,7 @@
 //GLOBAL NON DOM-OBJECT DECLARATIONS
 const shikonas=['Ura','Hoshoryu'];
 const rikishisGlobal=[];
+const PLACEHOLDER_ART="./assets/ai-generated-8722224_640.jpg"
 
 //GLOBAL DOM-OBJECT DECLARATIONS
 const imageDisplay=document.getElementById('image-display');
@@ -33,10 +34,11 @@ async function getRikishiByShikona(shikona){
 //get sumo wrestler by api-id
 async function getRikishiByID(id){
     try{
-        const response=await fetch(`https://sumo-api.com/api/rikishis/${id}/`);
+        const response=await fetch(`https://sumo-api.com/api/rikishi/${id}?intai=true`);
         if(!response.ok){throw new Error(`Error: ${response.status}`);}
+        console.log("getRikishiByID() pre response.json()");
         const rikishi=await response.json();
-        console.log(rikishi);
+        console.log("getRikishiByID() post response.json()", rikishi);
         return rikishi;
     }
     catch(error){throw new Error(`Error: ${error}`);}
@@ -45,7 +47,7 @@ async function getRikishiByID(id){
 //get additional sumo wrestler stats by api-id
 async function getStatsByID(id){
     try{
-        const response=await fetch(`https://sumo-api.com/api/rikishis/${id}/stats`);
+        const response=await fetch(`https://sumo-api.com/api/rikishi/${id}/stats`);
         if(!response.ok){throw new Error(`Error: ${response.status}`);}
         const rikishi=await response.json();
         console.log(rikishi);
@@ -92,20 +94,19 @@ async function generateRikishis(tournamentDate=202501){
         for(const rikishi of east){rikishiIDs.push(rikishi.rikishiID);}
         for(const rikishi of west){rikishiIDs.push(rikishi.rikishiID);}
         console.log(rikishiIDs);
-        /* rikishiIDs.forEach((id)=> {
+        for(const id of rikishiIDs){
             const rikishi=await getRikishiByID(id);
-            rikishis.push()}); */
-        for(id of rikishiIDs){
-            const rikishi=await getRikishiByID(id);
-            const rikishiParsed=await rikishi.json();
-            const matches=await getMatchesByID(id);
-            const matchesParsed=await matches.json();
-            const stats=await getStatsByID(id);
-            const statsParsed=await stats.json();
-            rikishiParsed.matches=matchesParsed;
-            rikishiParsed.stats=statsParsed;
-            rikishisGlobal.push(rikishiParsed);
+            console.log("rikishi fetched", rikishi);
+            //const matches=await getMatchesByID(id);
+            //const stats=await getStatsByID(id);
+            //rikishi.matches=matches;
+            //rikishi.stats=stats;
+            rikishisGlobal.push(rikishi);
         }
+        console.log("generation complete");
+        console.log(JSON.stringify(rikishisGlobal));
+        rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
+        saveToLocalStorage("rikishiIDs",rikishiIDs);
     }
     catch(error){console.error(`Error: ${error}`);}
 };
@@ -123,10 +124,42 @@ function loadFromLocalStorage(key){
 
 function removeFromLocalStorage(){};
 
-function createCards(){
+function createCard(rikishi){
+    const card={
+        rikishi: rikishi,
+        htmlContainer: document.createElement('div'),
+        portrait: document.createElement('img'),
+        ringName: document.createElement('h3'),
+        rank: document.createElement('h4'),
+        height: document.createElement('p'),
+        weight: document.createElement('p')
+    }
+    //set content
+    card.portrait.setAttribute('src', PLACEHOLDER_ART);
+    card.ringName.innerHTML=rikishi.shikonaEn;
+    card.rank.innerHTML=rikishi.currentRank;
+    card.height.innerHTML=`${rikishi.height} cm`;
+    card.weight.innerHTML=`${rikishi.weight} kg`;
 
+    //set additional attributes
+    card.htmlContainer.setAttribute('id', `rikishi#${rikishi.id}`);
+    card.htmlContainer.classList.add('card');
+    card.portrait.setAttribute('alt', `Portrait of professional sumo wrestler ${rikishi.shikonaEn}`);
+    card.portrait.setAttribute('height','640');
+    card.portrait.setAttribute('weight','426');
+
+    //add elements to html container
+    card.htmlContainer.appendChild(card.portrait);
+    card.htmlContainer.appendChild(card.ringName);
+    card.htmlContainer.appendChild(card.rank);
+    card.htmlContainer.appendChild(card.height);
+    card.htmlContainer.appendChild(card.weight);
+
+    //add card to document
+    document.getElementById('image-display').appendChild(card.htmlContainer);
 };
 
+//initialize data
 async function init(){
     //let result=await getRikishi('Ura');
     //let id=result.records[0].id;
@@ -134,10 +167,12 @@ async function init(){
     //let matches=await getMatches(id);
     //console.log(matches);
     //getKimarite();
-    generateRikishis();
+    const rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
+    if(rikishisFromStorage===undefined || rikishisFromStorage.length===0){generateRikishis();}
+    rikishisFromStorage.forEach((rikishi) => {createCard(loadFromLocalStorage(`${rikishi}`))});
 };
 
-//init();
+init();
 
 //getMatches();
 
