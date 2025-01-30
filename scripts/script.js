@@ -6,7 +6,7 @@
 //GLOBAL NON DOM-OBJECT DECLARATIONS
 const shikonas=['Ura','Hoshoryu'];
 const rikishisGlobal=[];
-const PLACEHOLDER_ART="./assets/ai-generated-8722224_640.jpg"
+const PLACEHOLDER_ART="./assets/ai-generated-8722224_640.jpg";
 
 //GLOBAL DOM-OBJECT DECLARATIONS
 const imageDisplay=document.getElementById('image-display');
@@ -104,6 +104,7 @@ async function generateRikishis(tournamentDate=202501){
             rikishisGlobal.push(rikishi);
         }
         console.log("generation complete");
+        sortRikishi();
         console.log(JSON.stringify(rikishisGlobal));
         rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
         saveToLocalStorage("rikishiIDs",rikishiIDs);
@@ -156,7 +157,61 @@ function createCard(rikishi){
     card.htmlContainer.appendChild(card.weight);
 
     //add card to document
-    document.getElementById('image-display').appendChild(card.htmlContainer);
+    rikishi.card=card;
+
+};
+
+function displayRikishis(){
+    sortRikishi();
+    rikishisGlobal.forEach((rikishi)=>{
+        document.getElementById('image-display').appendChild(rikishi.card.htmlContainer);
+    });
+};
+
+function sortRikishi(){
+    rikishisGlobal.sort((a, b)=>{
+        let aRank=a.currentRank, bRank=b.currentRank;
+        let aRankValue,bRankValue;
+        //aRankValue=findRankValue(aRank), bRankValue=findRankValue(bRank);
+        console.log(`A rank: ${aRank}, rank value: ${aRankValue=findRankValue(aRank)},\nB rank: ${bRank}, rank value: ${bRankValue=findRankValue(bRank)}`);
+        let returnValue=-2;
+        if(aRankValue<bRankValue){returnValue= -1;}
+        else if(aRankValue>bRankValue){returnValue=1;}
+        else{returnValue= 0;}
+        console.log(`Sorting algorithm return value: ${returnValue}`);
+        return returnValue;
+    });
+};
+
+function findRankValue(rank){
+    let rankValue=0;
+    if(rank.includes("West")){rankValue+=0.5;}
+    if(rank.includes("Yokozuna")){
+        rankValue+=Number(rank[9]);
+    }
+    if(rank.includes("Ozeki")){
+        rankValue+=10;
+        rankValue+=Number();
+    }
+    if(rank.includes("Sekiwake")){
+        rankValue+=20;
+        rankValue+=Number(rank[9]);
+    }
+    if(rank.includes("Komusubi")){
+        rankValue+=30;
+        rankValue+=Number(rank[9]);
+    }
+    if(rank.includes("Maegashira")){
+        rankValue+=40;
+        if(rank.length===17){
+            rankValue+=Number(rank[11]);
+        }
+        if(rank.length===18){
+            rankValue+=Number(rank.substring(11, 13));
+        }
+    }
+    //console.log(`Rank: ${rank}, Rank value: ${rankValue}`);
+    return rankValue;
 };
 
 //initialize data
@@ -169,7 +224,13 @@ async function init(){
     //getKimarite();
     const rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
     if(rikishisFromStorage===undefined || rikishisFromStorage.length===0){generateRikishis();}
-    rikishisFromStorage.forEach((rikishi) => {createCard(loadFromLocalStorage(`${rikishi}`))});
+    rikishisFromStorage.forEach((id) => {
+        const rikishi=loadFromLocalStorage(`${id}`);
+        rikishisGlobal.push(rikishi);
+        createCard(rikishi);
+    });
+    displayRikishis();
+    //rikishisFromStorage.forEach((rikishi) => {createCard(loadFromLocalStorage(`${rikishi}`))});
 };
 
 init();
