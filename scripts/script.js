@@ -181,6 +181,7 @@ function createDeck(){
             document.createElement('div'),
             document.createElement('div'),
             document.createElement('div'),
+            document.createElement('div'),
         ],
         cardsContainer: document.createElement('div'),
         editButton: document.createElement('button'),
@@ -204,6 +205,9 @@ function createDeck(){
         div.appendChild(rikishisGlobal[count++].card.htmlContainer);
         }
     );
+
+    //test
+    deck.cards[5].firstChild.remove();
 
     //set attributes
     deck.editButton.setAttribute('type', "button");
