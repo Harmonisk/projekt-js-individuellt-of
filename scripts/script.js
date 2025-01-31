@@ -1,6 +1,8 @@
 //IMPORTED EXTERNAL VARIABLES
 
 //IMPORTED EXTERNAL FUNCTIONS
+import { getRikishiByShikona, getMatchesByID, getRikishiByID, getStatsByID, getBanzuke } from "./modules/api-interface.js";
+import { loadFromLocalStorage, saveToLocalStorage, removeFromLocalStorage} from "./modules/localstorage.js"
 
 //GLOBAL NON DOM-OBJECT DECLARATIONS
 const shikonas=['Ura','Hoshoryu'];
@@ -16,7 +18,7 @@ const imageDisplay=document.getElementById('card-display');
 //GLOBAL FUNCTIONS
 
 //get sumo wrestler by ring name
-async function getRikishiByShikona(shikona){
+/* async function getRikishiByShikona(shikona){
     try{
         let response=await fetch(`https://sumo-api.com/api/rikishis?shikonaEn=${shikona}&measurements=true&ranks=true`);
         if(!response.ok)
@@ -78,47 +80,40 @@ async function getMatchesByID(id){
         return data;
     }
     catch(error){console.error(`Error: ${error}`)}
-}
+} */
 
 //generate sumo wrestlers by tournament date and division, defaults to top division and latest tournament
-async function generateRikishis(tournamentDate=202501, division="makuuchi"){
-    try{
-        const response=await fetch(`https://sumo-api.com/api/basho/${tournamentDate}/banzuke/${division}`);
-        if(!response.ok){
-            throw new Error(`Error: ${response.status}`);
-        }
-        const banzuke=await response.json();
-        //console.log(banzuke);
-        const {east:east, west:west}=banzuke;
-        const rikishiIDs=[];
-        for(const rikishi of east){rikishiIDs.push(rikishi.rikishiID);}
-        for(const rikishi of west){rikishiIDs.push(rikishi.rikishiID);}
-        //console.log(rikishiIDs);
-        for(const id of rikishiIDs){
-            const rikishi=await getRikishiByID(id);
-            console.log(`Rikishi fetched: ${rikishi.shikonaEn}`);
+async function generateRikishis(tournamentDate, division){
+    const banzuke=await getBanzuke(tournamentDate, division);
+    const {east:east, west:west}=banzuke;
+    const rikishiIDs=[];
+    for(const rikishi of east){rikishiIDs.push(rikishi.rikishiID);}
+    for(const rikishi of west){rikishiIDs.push(rikishi.rikishiID);}
 
-            //add extra data
-            /*
-            //const matches=await getMatchesByID(id);
-            //const stats=await getStatsByID(id);
-            //rikishi.matches=matches;
-            //rikishi.stats=stats;
-            */
+    for(const id of rikishiIDs){
+        const rikishi=await getRikishiByID(id);
+        console.log(`Rikishi fetched: ${rikishi.shikonaEn}`);
 
-            rikishisGlobal.push(rikishi);
-        }
-        console.log("generation complete");
-        sortRikishi();
-        //console.log(JSON.stringify(rikishisGlobal));
-        rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
-        saveToLocalStorage("rikishiIDs",rikishiIDs);
-        return rikishiIDs;
+        //add extra data
+        /*
+        //const matches=await getMatchesByID(id);
+        //const stats=await getStatsByID(id);
+        //rikishi.matches=matches;
+        //rikishi.stats=stats;
+        */
+
+        rikishisGlobal.push(rikishi);
     }
-    catch(error){console.error(`Error: ${error}`);}
+    console.log("generation complete");
+    sortRikishi();
+    //console.log(JSON.stringify(rikishisGlobal));
+    rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
+    saveToLocalStorage("rikishiIDs",rikishiIDs);
+    return rikishiIDs;
 };
 
-//save item to storage by key
+
+/* //save item to storage by key
 function saveToLocalStorage(key, object){
     const stringified=JSON.stringify(object);
     localStorage.setItem(key, stringified);
@@ -132,7 +127,7 @@ function loadFromLocalStorage(key){
 };
 
 //remove function by key
-function removeFromLocalStorage(key){};
+function removeFromLocalStorage(key){}; */
 
 function createCard(rikishi){
     //create card object with DOM-elements
