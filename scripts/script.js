@@ -17,71 +17,6 @@ const imageDisplay=document.getElementById('card-display');
 
 //GLOBAL FUNCTIONS
 
-//get sumo wrestler by ring name
-/* async function getRikishiByShikona(shikona){
-    try{
-        let response=await fetch(`https://sumo-api.com/api/rikishis?shikonaEn=${shikona}&measurements=true&ranks=true`);
-        if(!response.ok)
-            throw new Error(`${response.status}`);
-        //console.log(response);
-        const data=await response.json();
-        //console.log(data);
-        return data;
-    }
-    catch(error){
-        console.error("Error: " , error)
-    }
-};
-
-//get sumo wrestler by api-id
-async function getRikishiByID(id){
-    try{
-        const response=await fetch(`https://sumo-api.com/api/rikishi/${id}?intai=true`);
-        if(!response.ok){throw new Error(`Error: ${response.status}`);}
-        //console.log("getRikishiByID() pre response.json()");
-        const rikishi=await response.json();
-        //console.log("getRikishiByID() post response.json()", rikishi);
-        return rikishi;
-    }
-    catch(error){throw new Error(`Error: ${error}`);}
-};
-
-//get additional sumo wrestler stats by api-id
-async function getStatsByID(id){
-    try{
-        const response=await fetch(`https://sumo-api.com/api/rikishi/${id}/stats`);
-        if(!response.ok){throw new Error(`Error: ${response.status}`);}
-        const rikishi=await response.json();
-        //console.log(rikishi);
-        return rikishi;
-    }
-    catch(error){throw new Error(`Error: ${error}`);}
-};
-
-//get winning technique stats by technique name
-async function getKimarite(kimarite){
-    try{
-        const response=await fetch(`https://sumo-api.com/api/kimarite/${kimarite}`);
-        if(!response.ok){throw new Error('${response.status}');}
-        const data=await response.json();
-        //console.log(data);
-    }
-    catch(error){console.error(`Error: ${error}`);}
-};
-
-//get match results by sumo wrestler api-id
-async function getMatchesByID(id){
-    try{
-        const response=await fetch(`https://sumo-api.com/api/rikishi/${id}/matches`);
-        if(!response.ok){
-            throw new Error(`Error: ${response.status}`);
-        }
-        const data=await response.json();
-        return data;
-    }
-    catch(error){console.error(`Error: ${error}`)}
-} */
-
 //generate sumo wrestlers by tournament date and division, defaults to top division and latest tournament
 async function generateRikishis(tournamentDate, division){
     const banzuke=await getBanzuke(tournamentDate, division);
@@ -111,23 +46,6 @@ async function generateRikishis(tournamentDate, division){
     saveToLocalStorage("rikishiIDs",rikishiIDs);
     return rikishiIDs;
 };
-
-
-/* //save item to storage by key
-function saveToLocalStorage(key, object){
-    const stringified=JSON.stringify(object);
-    localStorage.setItem(key, stringified);
-};
-
-//load item from storage by key
-function loadFromLocalStorage(key){
-    const obj=localStorage.getItem(key);
-    const parsed=JSON.parse(obj);
-    return parsed;
-};
-
-//remove function by key
-function removeFromLocalStorage(key){}; */
 
 function createCard(rikishi){
     //create card object with DOM-elements
