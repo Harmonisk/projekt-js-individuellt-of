@@ -1,7 +1,6 @@
 //IMPORTED EXTERNAL VARIABLES
 
 //IMPORTED EXTERNAL FUNCTIONS
-//import test from './external.js';
 
 //GLOBAL NON DOM-OBJECT DECLARATIONS
 const shikonas=['Ura','Hoshoryu'];
@@ -37,9 +36,9 @@ async function getRikishiByID(id){
     try{
         const response=await fetch(`https://sumo-api.com/api/rikishi/${id}?intai=true`);
         if(!response.ok){throw new Error(`Error: ${response.status}`);}
-        console.log("getRikishiByID() pre response.json()");
+        //console.log("getRikishiByID() pre response.json()");
         const rikishi=await response.json();
-        console.log("getRikishiByID() post response.json()", rikishi);
+        //console.log("getRikishiByID() post response.json()", rikishi);
         return rikishi;
     }
     catch(error){throw new Error(`Error: ${error}`);}
@@ -51,7 +50,7 @@ async function getStatsByID(id){
         const response=await fetch(`https://sumo-api.com/api/rikishi/${id}/stats`);
         if(!response.ok){throw new Error(`Error: ${response.status}`);}
         const rikishi=await response.json();
-        console.log(rikishi);
+        //console.log(rikishi);
         return rikishi;
     }
     catch(error){throw new Error(`Error: ${error}`);}
@@ -82,22 +81,22 @@ async function getMatchesByID(id){
 }
 
 //generate sumo wrestlers by tournament date and division, defaults to top division and latest tournament
-async function generateRikishis(tournamentDate=202501, division=makuuchi){
+async function generateRikishis(tournamentDate=202501, division="makuuchi"){
     try{
         const response=await fetch(`https://sumo-api.com/api/basho/${tournamentDate}/banzuke/${division}`);
         if(!response.ok){
             throw new Error(`Error: ${response.status}`);
         }
         const banzuke=await response.json();
-        console.log(banzuke);
+        //console.log(banzuke);
         const {east:east, west:west}=banzuke;
         const rikishiIDs=[];
         for(const rikishi of east){rikishiIDs.push(rikishi.rikishiID);}
         for(const rikishi of west){rikishiIDs.push(rikishi.rikishiID);}
-        console.log(rikishiIDs);
+        //console.log(rikishiIDs);
         for(const id of rikishiIDs){
             const rikishi=await getRikishiByID(id);
-            console.log("rikishi fetched", rikishi);
+            console.log(`Rikishi fetched: ${rikishi.shikonaEn}`);
 
             //add extra data
             /*
@@ -111,9 +110,10 @@ async function generateRikishis(tournamentDate=202501, division=makuuchi){
         }
         console.log("generation complete");
         sortRikishi();
-        console.log(JSON.stringify(rikishisGlobal));
+        //console.log(JSON.stringify(rikishisGlobal));
         rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
         saveToLocalStorage("rikishiIDs",rikishiIDs);
+        return rikishiIDs;
     }
     catch(error){console.error(`Error: ${error}`);}
 };
@@ -219,11 +219,16 @@ function createDeck(){
     deck.htmlContainer.appendChild(deck.deleteButton);
 
     decks.push(deck);
-}
+};
+
+//generate cards for all loaded sumo wrestlers 
+function generateCards(){
+    rikishisGlobal.forEach((rikishi)=>{createCard(rikishi)});
+};
 
 function displayDecks(){
     decks.forEach((deck) => {document.getElementById('deck-display').appendChild(deck.htmlContainer);});
-}
+};
 
 function displayRikishis(){
     sortRikishi();
@@ -236,13 +241,13 @@ function sortRikishi(){
     rikishisGlobal.sort((a, b)=>{
         let aRank=a.currentRank, bRank=b.currentRank;
         let aRankValue,bRankValue;
-        //aRankValue=findRankValue(aRank), bRankValue=findRankValue(bRank);
-        console.log(`A rank: ${aRank}, rank value: ${aRankValue=findRankValue(aRank)},\nB rank: ${bRank}, rank value: ${bRankValue=findRankValue(bRank)}`);
+        aRankValue=findRankValue(aRank), bRankValue=findRankValue(bRank);
+        //console.log(`A rank: ${aRank}, rank value: ${aRankValue=findRankValue(aRank)},\nB rank: ${bRank}, rank value: ${bRankValue=findRankValue(bRank)}`);
         let returnValue=-2;
         if(aRankValue<bRankValue){returnValue= -1;}
         else if(aRankValue>bRankValue){returnValue=1;}
         else{returnValue= 0;}
-        console.log(`Sorting algorithm return value: ${returnValue}`);
+        //console.log(`Sorting algorithm return value: ${returnValue}`);
         return returnValue;
     });
 };
@@ -280,13 +285,15 @@ function findRankValue(rank){
 
 //initialize data
 async function init(){
-    const rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
-    if(rikishisFromStorage===undefined || rikishisFromStorage.length===0){generateRikishis();}
-    rikishisFromStorage.forEach((id) => {
-        const rikishi=loadFromLocalStorage(`${id}`);
-        rikishisGlobal.push(rikishi);
-        createCard(rikishi);
-    });
+    let rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
+    if(rikishisFromStorage===undefined || rikishisFromStorage===null || rikishisFromStorage.length===0){await generateRikishis();}
+    else{
+        rikishisFromStorage.forEach((id) => {
+            rikishisGlobal.push(loadFromLocalStorage(`${id}`));
+        });
+    }
+    generateCards();
+    console.log(rikishisGlobal);
     displayRikishis();
     createDeck();
     displayDecks();
