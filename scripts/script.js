@@ -79,6 +79,20 @@ function createCard(rikishi){
     card.htmlContainer.appendChild(card.height);
     card.htmlContainer.appendChild(card.weight);
 
+    //add event listener to card
+    card.htmlContainer.addEventListener('click', (event)=>{
+        let deck=getEditModeDeck();
+        let breakLoop=false;
+        if(deck!=undefined && deck!=null){
+            deck.htmlContainer.cards.forEach((cardContainer) => {
+                if(breakLoop===false && cardContainer.firstChild===null){
+                    cardContainer.appendChild(event.target);
+                    breakLoop=true;
+                }
+            });
+        }
+    });
+
     //add card to document
     rikishi.card=card;
 
@@ -98,7 +112,8 @@ function createDeck(){
         ],
         cardsContainer: document.createElement('div'),
         editButton: document.createElement('button'),
-        deleteButton: document.createElement('button')
+        deleteButton: document.createElement('button'),
+        editMode: false
     }
     //set content
     deck.name.innerHTML=`Deck 1`;
@@ -126,6 +141,11 @@ function createDeck(){
     deck.editButton.setAttribute('type', "button");
     deck.deleteButton.setAttribute('type', "button");
 
+    //add event listeners
+    deck.editButton.addEventListener('click', (event)=>{
+        activateEditMode(event.target.parentNode);
+    });
+
     //add individual card containers to card container
     deck.cards.forEach((div)=>{deck.cardsContainer.appendChild(div);});
 
@@ -137,6 +157,16 @@ function createDeck(){
 
     decks.push(deck);
 };
+
+//activate edit mode for selected deck
+function activateEditMode(deck){
+    deck.editMode=true;
+    deck.htmlContainer.setAttribute('id', 'editMode');
+};
+
+function getEditModeDeck(){
+    decks.find((deck)=>deck.editMode===true);
+}
 
 //generate cards for all loaded sumo wrestlers 
 function generateCards(){

@@ -95,6 +95,12 @@ h4{
     }
 }
 
+#editMode{
+    .card-container{
+        background-color: aqua;
+    }
+}
+
 .card{
     /* width:100px;
     height:150px; */
