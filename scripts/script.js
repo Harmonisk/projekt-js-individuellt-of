@@ -9,6 +9,7 @@ const shikonas=['Ura','Hoshoryu'];
 const rikishisGlobal=[];
 const PLACEHOLDER_ART="./assets/ai-generated-8722224_640.jpg";
 const decks=[];
+const deckSize=6;
 
 //GLOBAL DOM-OBJECT DECLARATIONS
 const imageDisplay=document.getElementById('card-display');
@@ -81,12 +82,23 @@ function createCard(rikishi){
 
     //add event listener to card
     card.htmlContainer.addEventListener('click', (event)=>{
+        console.log(`This card clicked: ${event.target.parentNode.getElementsByTagName('h3')[0].innerHTML}`);
+        let card=event.target.parentNode;
+        if(event.target.classList.contains("card")){card=event.target;}
         let deck=getEditModeDeck();
         let breakLoop=false;
         if(deck!=undefined && deck!=null){
-            deck.htmlContainer.cards.forEach((cardContainer) => {
+            //console.log(`not undefined or null, deck: ${JSON.stringify(deck)}`);
+            deck.cards.forEach((cardContainer)=>{
+                if(cardContainer.firstChild===card){
+                    document.getElementById('card-display').appendChild(card);
+                    breakLoop=true;
+                }
+            });
+            console.log(breakLoop);
+            deck.cards.forEach((cardContainer) => {
                 if(breakLoop===false && cardContainer.firstChild===null){
-                    cardContainer.appendChild(event.target);
+                    cardContainer.appendChild(card);
                     breakLoop=true;
                 }
             });
@@ -102,14 +114,7 @@ function createDeck(){
     const deck={
         name: document.createElement('h3'),
         htmlContainer: document.createElement('div'),
-        cards: [
-            document.createElement('div'),
-            document.createElement('div'),
-            document.createElement('div'),
-            document.createElement('div'),
-            document.createElement('div'),
-            document.createElement('div'),
-        ],
+        cards: [],
         cardsContainer: document.createElement('div'),
         editButton: document.createElement('button'),
         deleteButton: document.createElement('button'),
@@ -126,16 +131,18 @@ function createDeck(){
     deck.editButton.classList.add(`edit-button`);
     deck.deleteButton.classList.add(`delete-button`);
 
-    //add cards 
-    let count=0;
-    deck.cards.forEach((div)=>
-        {div.classList.add('card-container');
-        div.appendChild(rikishisGlobal[count++].card.htmlContainer);
-        }
-    );
+    //create card containers
+    for (let count=0; count < deckSize; count++){
+        const cardContainer=document.createElement('div');
+        cardContainer.classList.add('card-container');
+        deck.cards.push(cardContainer);
+        //div.appendChild(rikishisGlobal[count++].card.htmlContainer);
+    }
+    
+    console.log(deck.cards.length);
 
-    //test
-    deck.cards[5].firstChild.remove();
+    //add cards for test purposes
+    deck.cards[0].appendChild(rikishisGlobal[5].card.htmlContainer);
 
     //set attributes
     deck.editButton.setAttribute('type', "button");
@@ -143,11 +150,12 @@ function createDeck(){
 
     //add event listeners
     deck.editButton.addEventListener('click', (event)=>{
-        activateEditMode(event.target.parentNode);
+        let parentDeck=decks.find((deck)=>deck.editButton===event.target);
+        activateEditMode(parentDeck);
     });
 
     //add individual card containers to card container
-    deck.cards.forEach((div)=>{deck.cardsContainer.appendChild(div);});
+    deck.cards.forEach((div)=>{deck.cardsContainer.appendChild(div);        console.log('asfsf');});
 
     //add to htmlcontainer
     deck.htmlContainer.appendChild(deck.name);
@@ -155,17 +163,20 @@ function createDeck(){
     deck.htmlContainer.appendChild(deck.editButton);
     deck.htmlContainer.appendChild(deck.deleteButton);
 
+    //console.log(`${JSON.stringify(deck.htmlContainer)}`);
+
     decks.push(deck);
 };
 
 //activate edit mode for selected deck
 function activateEditMode(deck){
+    //console.log(deck);
     deck.editMode=true;
     deck.htmlContainer.setAttribute('id', 'editMode');
 };
 
 function getEditModeDeck(){
-    decks.find((deck)=>deck.editMode===true);
+    return decks.find((deck)=>deck.editMode===true);
 }
 
 //generate cards for all loaded sumo wrestlers 
@@ -240,7 +251,7 @@ async function init(){
         });
     }
     generateCards();
-    console.log(rikishisGlobal);
+    //console.log(rikishisGlobal);
     displayRikishis();
     createDeck();
     displayDecks();

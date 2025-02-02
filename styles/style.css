@@ -23,6 +23,15 @@ header{
     grid-area:head;
 }
 
+#page-header{
+    background-color: darkred;
+}
+
+.menu-header{
+    background-color: black;
+    h2{color:white;}
+}
+
 main{
     grid-area:display;
 }
@@ -34,6 +43,7 @@ img{
 h1{
     font-size:70px;
     text-align: center;
+    color:white;
 }
 
 h2{
@@ -53,13 +63,13 @@ h4{
 }
 
 #card-display{
-    background-color:darkkhaki;
+    background-color:floralwhite;
     padding-top: 25px;
     width: 100%;
     display:flex;
     justify-content: center;
     flex-wrap:wrap;
-    gap:10px;
+    gap:20px;
 }
 
 .cards-container{
@@ -67,6 +77,8 @@ h4{
     display:flex;
     flex-wrap:wrap;
     flex-direction: row;
+    justify-content: space-evenly;
+    gap: 5px;
     
 }
 
@@ -75,21 +87,24 @@ h4{
     /* display:flex; */
     display: inline;
     height:auto;
-    width:33%;
-    aspect-ratio: 1.5/1;
-    background-color: red;
+    width:30%;
+    aspect-ratio: 1/1.6;
+    background-color: #00000099;
+    margin-bottom: 10px;
     .card{
+        padding:15px;
+        padding-bottom: 120px;
         overflow: hidden;
         width:100%;
         aspect-ratio: 1/1.6;
         h3{
-            font-size: 6px;
+            font-size: 20px;
         }
         h4{
-            font-size: 5px;
+            font-size: 15px;
         }
         p{
-            display:none;
+           font-size: 0px;
         }
 
     }
@@ -97,7 +112,7 @@ h4{
 
 #editMode{
     .card-container{
-        background-color: aqua;
+        
     }
 }
 
@@ -105,25 +120,30 @@ h4{
     /* width:100px;
     height:150px; */
     aspect-ratio: 1/1.5;
-    padding: 5px;
+    padding: 20px;
     border:5px solid black;
-    background-color: gold;
+    border-radius: 15px;
+    background-color: white;
+    h3{
+        background-color: black;
+        color:white;}
+    h4{
+        background-color:darkred;
+        color: white;
+    }
     p{
-        /*font-size:clamp(1px,20px,100px);*/
+        background-color: lightgray;
     }
 }
 
-#page-header{
-    background-color: sandybrown;
-}
-
 .deck-container{
-    background-color: green;
+    background-color: darkred;
+    h3{color:white;}
 }
 
 aside{
     grid-area:side;
-    background-color: darkblue;
+    background-color: darkgrey;
 }
 
 
