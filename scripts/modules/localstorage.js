@@ -15,12 +15,14 @@ export function loadFromLocalStorage(key){
 
 //edit item in local storage by key
 export function updateInLocalStorage(key, addedObjects=[], removedObjects=[]){
+    console.log(`update: addedobjects.length:${addedObjects.length} removedobjects.length:${removedObjects.length}`);
     let collection=loadFromLocalStorage(key);
-    if(collection!=undefined){collection=[];}
-    for(remObj of removedObjects){
-        collection.splice(indexOf(remObj),1);
+    if(collection==undefined){collection=[];}
+    for(const remObj of removedObjects){
+        console.log(remObj);
+        collection.splice(collection.indexOf(remObj),1);
     }
-    for(addObj of addedObjects){collection.push;}
+    for(const addObj of addedObjects){collection.push(addObj);}
     saveToLocalStorage(key, collection);
 }
 

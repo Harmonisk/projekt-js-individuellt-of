@@ -185,9 +185,11 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
             }
         });
         deactivateEditMode();
+        //console.log(parentDeck.name.innerHTML);
         parentDeck.htmlContainer.remove();
         //console.log(decks.findIndex(parentDeck));
         decks.splice(decks.indexOf(parentDeck),1);
+        updateInLocalStorage('deckNames',undefined,[parentDeck.name.innerHTML]);
         /* let count=0;
         decks.forEach((deck)=>{deck.name.innerHTML=`Deck ${++count}`}); */
     });
@@ -205,17 +207,22 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
 
     decks.push(deck);
     if(!stored){
+        //console.log(deck.name.innerHTML);
         saveToLocalStorage(deck.name, rikishiIds);
         saveToLocalStorage('deckCount',deckCount);
-        
+        //let deckNames=[deck.name.innerHTML];
+        updateInLocalStorage('deckNames',[deck.name.innerHTML])
     }
 };
 
 function generateDecks(){
     const deckNames=loadFromLocalStorage('deckNames');
     if(deckNames!=null){
-
+        for(const deckName of deckNames){
+            createDeck(deckName,loadFromLocalStorage(deckName),true);
+        }
     }
+    displayDecks();
 }
 
 //activate edit mode for selected deck
@@ -223,7 +230,7 @@ function activateEditMode(deck){
     deactivateEditMode();
     //console.log(deck);
     deck.editMode=true;
-    deck.editButton.innerHTML="Accept";
+    deck.editButton.innerHTML="Done";
     deck.htmlContainer.setAttribute('id', 'editMode');
 };
 
@@ -317,6 +324,7 @@ async function init(){
     generateCards();
     //console.log(rikishisGlobal);
     displayRikishis();
+    generateDecks();
     //createDeck();
     //displayDecks();
 };
