@@ -1,7 +1,7 @@
 //IMPORTED EXTERNAL VARIABLES
 
 //IMPORTED EXTERNAL FUNCTIONS
-import { getRikishiByShikona, getMatchesByID, getRikishiByID, getStatsByID, getBanzuke } from "./modules/api-interface.js";
+import { getRikishiByShikona, getMatchesByID, getRikishiByID, getStatsByID, getBanzuke, getKimarite } from "./modules/api-interface.js";
 import { loadFromLocalStorage, saveToLocalStorage, updateInLocalStorage, removeFromLocalStorage} from "./modules/localstorage.js"
 
 //GLOBAL NON DOM-OBJECT DECLARATIONS
@@ -63,12 +63,6 @@ function findDeckByContainer(container){
     return decks.find((deck)=>deck.htmlContainer===container);
 }
 
-/* //find card by html container
-function findCardByContainer(container){
-    return decks.find(())
-}
-*/
-
 //create a card from a sumo wrestler
 function createCard(rikishi){
     //create card object with DOM-elements
@@ -111,7 +105,6 @@ function createCard(rikishi){
         let breakLoop=false;
         console.log();
         if(deck!=undefined && deck!=null){
-            //console.log(`not undefined or null, deck: ${JSON.stringify(deck)}`);
             deck.cards.forEach((cardContainer)=>{
                 if(cardContainer.firstChild===card){
                     document.getElementById('card-display').appendChild(card);
@@ -123,7 +116,6 @@ function createCard(rikishi){
             deck.cards.forEach((cardContainer) => {
                 if(breakLoop===false && cardContainer.firstChild===null && !card.parentNode.classList.contains("card-container")){
                     cardContainer.appendChild(card);
-                    //console.log(findRikishiByCard(card));
                     updateInLocalStorage(deck.name.innerHTML,[findRikishiByCardHtmlContainer(card).id]);
                     breakLoop=true;
                 }
@@ -134,6 +126,17 @@ function createCard(rikishi){
     //add card to document
     rikishi.card=card;
 
+};
+
+//add card to deck
+function addCardToDeck(card, deck){
+    deck.cards.forEach((cardContainer) => {
+        let breakLoop=false;
+        if(breakLoop===false && cardContainer.firstChild===null && !card.parentNode.classList.contains("card-container")){
+            cardContainer.appendChild(card);
+            breakLoop=true;
+        }
+    });
 };
 
 //create deck
@@ -213,8 +216,13 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
     deck.htmlContainer.appendChild(deck.editButton);
     deck.htmlContainer.appendChild(deck.deleteButton);
 
-    //console.log(`${JSON.stringify(deck.htmlContainer)}`);
+    //add cards
+    for(const id of rikishiIds){
+        const card=rikishisGlobal.find((rikishi) => rikishi.id===id).card;
+        addCardToDeck(card.htmlContainer, deck);
+    }
 
+    //add deck to global list of decks
     decks.push(deck);
     if(!stored){
         //console.log(deck.name.innerHTML);
@@ -323,8 +331,55 @@ function findRankValue(rank){
     return rankValue;
 };
 
+//test error messages from api
+async function erroneousCalls(){
+    try{
+        //incorrect call to getBanzuke
+        await getBanzuke("NotARealDate", "NotARealDivision");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+    try{
+        //incorrect call to getRikishiByID
+        await getRikishiByID("NotARealID");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+    try{
+        //incorrect call to getMatchesByID
+        await getMatchesByID("NotARealID");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+    try{
+        //incorrect call to getKimarite getKimarite
+        await getKimarite("NotARealKimarite");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+    try{
+        //incorrect call to getStatsByID
+        await getStatsByID("NotARealID");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+    try{
+        //incorrect call to getRikishiByShikona
+        await getRikishiByShikona("NotARealShikona");
+    }
+    catch(error){
+        alert(`Critical error: ${error}`);
+    }
+};
+
 //initialize data
 async function init(){
+    try{
     let rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
     if(rikishisFromStorage===undefined || rikishisFromStorage===null || rikishisFromStorage.length===0){await generateRikishis();}
     else{
@@ -333,11 +388,12 @@ async function init(){
         });
     }
     generateCards();
-    //console.log(rikishisGlobal);
     displayRikishis();
     generateDecks();
-    //createDeck();
-    //displayDecks();
+    }
+    catch(error){
+        alert(`Critical Error: ${error}\\n\\nPlease reload page or try again later!`);
+    }
 };
 
 //run app
