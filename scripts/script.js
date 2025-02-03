@@ -381,7 +381,10 @@ async function erroneousCalls(){
 async function init(){
     try{
     let rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
-    if(rikishisFromStorage===undefined || rikishisFromStorage===null || rikishisFromStorage.length===0){await generateRikishis();}
+    if(rikishisFromStorage===undefined || rikishisFromStorage===null || rikishisFromStorage.length===0){
+        alert(`Local data not found\\nPlease wait for game to load!`);
+        await generateRikishis();
+    }
     else{
         rikishisFromStorage.forEach((id) => {
             rikishisGlobal.push(loadFromLocalStorage(`${id}`));
