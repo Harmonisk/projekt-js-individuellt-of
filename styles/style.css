@@ -136,9 +136,27 @@ h4{
     }
 }
 
+#deck-display{
+    /* border:5px outset black */
+}
+
+#deck-collection{
+    display:flex;
+    padding:20px;
+    justify-content: center;
+    background-color: darkred;
+    /* border:5px inset black; */
+    height: 100%;
+}
+
 .deck-container{
     background-color: darkred;
-    h3{color:white;}
+    border:5px outset black;
+    h3{
+        font-size:3rem;
+        padding:1rem;
+        color:white;
+    }
 }
 
 aside{
@@ -146,7 +164,39 @@ aside{
     background-color: darkgrey;
 }
 
+#create-deck-button{
+    border-radius:20px;
+    height:150px;
+    font-size:5rem;
+    padding: 0px 50px;
+}
 
+.edit-button{
+    margin:10px;
+    font-size:2rem;
+    width:150px;
+    height:100px;
+    border-radius: 30px;
+}
 
+.delete-button{
+    margin:10px;
+    margin-left:320px;
+    font-size:2rem;
+    width:150px;
+    height:100px;
+    border-radius: 30px;
+}
+
+button{
+    color:white;
+    background-color: black;
+    transition: 1s color linear;
+}
+
+button:hover{
+    color:black;
+    background-color: white;
+}
 
 

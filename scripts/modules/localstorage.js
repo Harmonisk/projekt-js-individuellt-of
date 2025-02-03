@@ -13,5 +13,18 @@ export function loadFromLocalStorage(key){
     return parsed;
 };
 
-//remove function by key
-export function removeFromLocalStorage(key){};
+//edit item in local storage by key
+export function updateInLocalStorage(key, addedObjects=[], removedObjects=[]){
+    let collection=loadFromLocalStorage(key);
+    if(collection!=undefined){collection=[];}
+    for(remObj of removedObjects){
+        collection.splice(indexOf(remObj),1);
+    }
+    for(addObj of addedObjects){collection.push;}
+    saveToLocalStorage(key, collection);
+}
+
+//remove item fromlocal storage by key
+export function removeFromLocalStorage(key){
+    localStorage.removeItem(key);
+};
