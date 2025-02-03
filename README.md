@@ -1,16 +1,16 @@
-#Yu-shi-oh!
+# Yu-shi-oh!
 
-##What is Yu-shi-oh!?
+## What is Yu-shi-oh!?
 Yu-shi-oh! is a digital collectible card game where the player collects sumo wrestler cards, creates decks and put their cards to the test by battling opposing sumo wrestlers.
 
-##Current features
+## Current features
 Currently only the functionality for displaying the current card collection as well as creating, editing and deleting decks have been added.
 
-##Planned upcoming features
+## Planned upcoming features
 * Pack opening mode: a mode where the player can open card packs in order to aquire new cards.
 * Tournament mode: a gameplay mode where players can enter with their deck of sumo wrestlers and compete day by day in a 15-day tournament.
 
-##How to play
+## How to play
 Currently players have access to the collection view. It works as follows: 
 1. The player will start with a full collection of all the sumo wrestlers from the top division of the latest tournament.
 2. In the main section you will see your cards, scroll up and down to see all your cards.
