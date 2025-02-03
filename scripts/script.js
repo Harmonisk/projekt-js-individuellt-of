@@ -54,14 +54,20 @@ async function generateRikishis(tournamentDate, division){
 };
 
 //find sumo wrestler by card
-function findRikishiByCard(card){
-    return rikishisGlobal.find((rikishi)=>rikishi.card===card);
+function findRikishiByCardHtmlContainer(container){
+    return rikishisGlobal.find((rikishi)=>rikishi.card.htmlContainer===container);
 }
 
 //find deck by html container
 function findDeckByContainer(container){
     return decks.find((deck)=>deck.htmlContainer===container);
 }
+
+/* //find card by html container
+function findCardByContainer(container){
+    return decks.find(())
+}
+*/
 
 //create a card from a sumo wrestler
 function createCard(rikishi){
@@ -109,6 +115,7 @@ function createCard(rikishi){
             deck.cards.forEach((cardContainer)=>{
                 if(cardContainer.firstChild===card){
                     document.getElementById('card-display').appendChild(card);
+                    updateInLocalStorage(deck.name.innerHTML,undefined,[findRikishiByCardHtmlContainer(card).id]);
                     breakLoop=true;
                 }
             });
@@ -116,6 +123,8 @@ function createCard(rikishi){
             deck.cards.forEach((cardContainer) => {
                 if(breakLoop===false && cardContainer.firstChild===null && !card.parentNode.classList.contains("card-container")){
                     cardContainer.appendChild(card);
+                    //console.log(findRikishiByCard(card));
+                    updateInLocalStorage(deck.name.innerHTML,[findRikishiByCardHtmlContainer(card).id]);
                     breakLoop=true;
                 }
             });
@@ -190,6 +199,7 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
         //console.log(decks.findIndex(parentDeck));
         decks.splice(decks.indexOf(parentDeck),1);
         updateInLocalStorage('deckNames',undefined,[parentDeck.name.innerHTML]);
+        removeFromLocalStorage(parentDeck.name.innerHTML)
         /* let count=0;
         decks.forEach((deck)=>{deck.name.innerHTML=`Deck ${++count}`}); */
     });
@@ -208,7 +218,7 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
     decks.push(deck);
     if(!stored){
         //console.log(deck.name.innerHTML);
-        saveToLocalStorage(deck.name, rikishiIds);
+        saveToLocalStorage(deck.name.innerHTML, rikishiIds);
         saveToLocalStorage('deckCount',deckCount);
         //let deckNames=[deck.name.innerHTML];
         updateInLocalStorage('deckNames',[deck.name.innerHTML])
@@ -231,13 +241,14 @@ function activateEditMode(deck){
     //console.log(deck);
     deck.editMode=true;
     deck.editButton.innerHTML="Done";
-    deck.htmlContainer.setAttribute('id', 'editMode');
+    deck.htmlContainer.classList.add('editMode');
 };
 
 function deactivateEditMode(){
     decks.forEach((deck)=>{
         deck.editButton.innerHTML="Edit";
         deck.editMode=false;
+        deck.htmlContainer.classList.remove('editMode');
     });
 }
 

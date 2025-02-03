@@ -87,21 +87,23 @@ h4{
     /* display:flex; */
     display: inline;
     height:auto;
-    width:30%;
+    width:15%;
     aspect-ratio: 1/1.6;
     background-color: #00000099;
     margin-bottom: 10px;
     .card{
-        padding:15px;
-        padding-bottom: 120px;
+        /* padding:15px;
+        padding-bottom: 120px; */
         overflow: hidden;
         width:100%;
         aspect-ratio: 1/1.6;
+        padding:0px;
         h3{
-            font-size: 20px;
+            padding:0px;
+            font-size: 0.8em;
         }
         h4{
-            font-size: 15px;
+            font-size: 1px;
         }
         p{
            font-size: 0px;
@@ -110,9 +112,20 @@ h4{
     }
 }
 
-#editMode{
+.editMode{
     .card-container{
-        
+       
+        width:30%;
+        .card{
+            padding:15px;
+            padding-bottom: 120px;
+            h3{
+                font-size: 20px;
+            }
+            h4{
+                font-size: 15px;
+            }
+        }
     }
 }
 
@@ -194,9 +207,9 @@ button{
     transition: 1s color linear;
 }
 
-button:hover{
+/* button:hover{
     color:black;
     background-color: white;
-}
+} */
 
 
