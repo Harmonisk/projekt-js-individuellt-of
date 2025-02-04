@@ -5,11 +5,11 @@ import { getRikishiByShikona, getMatchesByID, getRikishiByID, getStatsByID, getB
 import { loadFromLocalStorage, saveToLocalStorage, updateInLocalStorage, removeFromLocalStorage} from "./modules/localstorage.js"
 
 //GLOBAL NON DOM-OBJECT DECLARATIONS
-const shikonas=['Ura','Hoshoryu'];
+const RING_NAMES=['Ura','Hoshoryu'];
 const rikishisGlobal=[];
 const PLACEHOLDER_ART="./assets/ai-generated-8722224_640.jpg";
 const decks=[];
-const deckSize=6;
+const DECK_SIZE=6;
 let deckCount=loadFromLocalStorage('deckCount')!=null? loadFromLocalStorage('deckCount') : 0 ;
 
 //GLOBAL DOM-OBJECT DECLARATIONS
@@ -158,7 +158,7 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
     deck.deleteButton.classList.add(`delete-button`);
 
     //create card containers
-    for (let count=0; count < deckSize; count++){
+    for (let count=0; count < DECK_SIZE; count++){
         const cardContainer=document.createElement('div');
         cardContainer.classList.add('card-container');
         deck.cards.push(cardContainer);
