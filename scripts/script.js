@@ -283,31 +283,17 @@ function sortRikishi(){
 function findRankValue(rank){
     let rankValue=0;
     if(rank.includes("West")){rankValue+=0.5;}
-    if(rank.includes("Yokozuna")){
-        rankValue+=Number(rank[9]);
+    
+    switch(rank[0]){
+        case "Y": rankValue+=0;  rankValue+=Number(rank[9]); break;
+        case "O": rankValue+=10; rankValue+=Number(rank[6]); break;
+        case "S": rankValue+=20; rankValue+=Number(rank[9]); break;
+        case "K": rankValue+=30; rankValue+=Number(rank[9]); break;
+        case "M": rankValue+=40;
+        if(rank.length===17) rankValue+=Number(rank[11]);
+        if(rank.length===18) rankValue+=Number(rank.substring(11, 13));
     }
-    if(rank.includes("Ozeki")){
-        rankValue+=10;
-        rankValue+=Number();
-    }
-    if(rank.includes("Sekiwake")){
-        rankValue+=20;
-        rankValue+=Number(rank[9]);
-    }
-    if(rank.includes("Komusubi")){
-        rankValue+=30;
-        rankValue+=Number(rank[9]);
-    }
-    if(rank.includes("Maegashira")){
-        rankValue+=40;
-        if(rank.length===17){
-            rankValue+=Number(rank[11]);
-        }
-        if(rank.length===18){
-            rankValue+=Number(rank.substring(11, 13));
-        }
-    }
-    return rankValue;
+    return rankValue;     
 };
 
 //test error messages from api
