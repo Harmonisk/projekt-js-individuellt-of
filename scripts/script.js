@@ -33,7 +33,6 @@ async function generateRikishis(tournamentDate, division){
 
     for(const id of rikishiIDs){
         const rikishi=await getRikishiByID(id);
-        console.log(`Rikishi fetched: ${rikishi.shikonaEn}`);
 
         //add extra data
         /*
@@ -47,7 +46,6 @@ async function generateRikishis(tournamentDate, division){
     }
     console.log("generation complete");
     sortRikishi();
-    //console.log(JSON.stringify(rikishisGlobal));
     rikishisGlobal.forEach((rikishi) => {saveToLocalStorage(`${rikishi.id}`, rikishi);})
     saveToLocalStorage("rikishiIDs",rikishiIDs);
     return rikishiIDs;
@@ -86,8 +84,6 @@ function createCard(rikishi){
     card.htmlContainer.setAttribute('id', `rikishi#${rikishi.id}`);
     card.htmlContainer.classList.add('card');
     card.portrait.setAttribute('alt', `Portrait of professional sumo wrestler ${rikishi.shikonaEn}`);
-    //card.portrait.setAttribute('height','640');
-    //card.portrait.setAttribute('weight','426');
 
     //add elements to html container
     card.htmlContainer.appendChild(card.portrait);
@@ -98,7 +94,6 @@ function createCard(rikishi){
 
     //add event listener to card
     card.htmlContainer.addEventListener('click', (event)=>{
-        console.log(`This card clicked: ${event.target.parentNode.getElementsByTagName('h3')[0].innerHTML}`);
         let card=event.target.parentNode;
         if(event.target.classList.contains("card")){card=event.target;}
         let deck=getEditModeDeck();
@@ -150,8 +145,8 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
         deleteButton: document.createElement('button'),
         editMode: false
     }
+
     //set content
-    //deck.name.innerHTML=`Deck ${decks.length+1}`;
     deck.name.innerHTML=name;
     deck.editButton.innerHTML=`Edit`;
     deck.deleteButton.innerHTML=`Delete`;
@@ -167,13 +162,7 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
         const cardContainer=document.createElement('div');
         cardContainer.classList.add('card-container');
         deck.cards.push(cardContainer);
-        //div.appendChild(rikishisGlobal[count++].card.htmlContainer);
     }
-    
-    console.log(deck.cards.length);
-
-    //add cards
-    //deck.cards[0].appendChild(rikishisGlobal[5].card.htmlContainer);
 
     //set attributes
     deck.editButton.setAttribute('type', "button");
@@ -197,14 +186,10 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
             }
         });
         deactivateEditMode();
-        //console.log(parentDeck.name.innerHTML);
         parentDeck.htmlContainer.remove();
-        //console.log(decks.findIndex(parentDeck));
         decks.splice(decks.indexOf(parentDeck),1);
         updateInLocalStorage('deckNames',undefined,[parentDeck.name.innerHTML]);
         removeFromLocalStorage(parentDeck.name.innerHTML)
-        /* let count=0;
-        decks.forEach((deck)=>{deck.name.innerHTML=`Deck ${++count}`}); */
     });
 
     //add individual card containers to card container
@@ -225,10 +210,8 @@ function createDeck(name=`Deck ${++deckCount}`, rikishiIds=[], stored=false){
     //add deck to global list of decks
     decks.push(deck);
     if(!stored){
-        //console.log(deck.name.innerHTML);
         saveToLocalStorage(deck.name.innerHTML, rikishiIds);
         saveToLocalStorage('deckCount',deckCount);
-        //let deckNames=[deck.name.innerHTML];
         updateInLocalStorage('deckNames',[deck.name.innerHTML])
     }
 };
@@ -246,7 +229,6 @@ function generateDecks(){
 //activate edit mode for selected deck
 function activateEditMode(deck){
     deactivateEditMode();
-    //console.log(deck);
     deck.editMode=true;
     deck.editButton.innerHTML="Done";
     deck.htmlContainer.classList.add('editMode');
@@ -289,12 +271,10 @@ function sortRikishi(){
         let aRank=a.currentRank, bRank=b.currentRank;
         let aRankValue,bRankValue;
         aRankValue=findRankValue(aRank), bRankValue=findRankValue(bRank);
-        //console.log(`A rank: ${aRank}, rank value: ${aRankValue=findRankValue(aRank)},\nB rank: ${bRank}, rank value: ${bRankValue=findRankValue(bRank)}`);
         let returnValue=-2;
         if(aRankValue<bRankValue){returnValue= -1;}
         else if(aRankValue>bRankValue){returnValue=1;}
         else{returnValue= 0;}
-        //console.log(`Sorting algorithm return value: ${returnValue}`);
         return returnValue;
     });
 };
@@ -327,7 +307,6 @@ function findRankValue(rank){
             rankValue+=Number(rank.substring(11, 13));
         }
     }
-    //console.log(`Rank: ${rank}, Rank value: ${rankValue}`);
     return rankValue;
 };
 
@@ -382,7 +361,7 @@ async function init(){
     try{
     let rikishisFromStorage=loadFromLocalStorage("rikishiIDs");
     if(rikishisFromStorage===undefined || rikishisFromStorage===null || rikishisFromStorage.length===0){
-        alert(`Local data not found\\nPlease wait for game to load!`);
+        alert(`Local data not found\nPlease wait for game to load!`);
         await generateRikishis();
     }
     else{
